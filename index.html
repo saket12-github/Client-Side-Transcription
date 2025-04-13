@@ -46,10 +46,10 @@
     </div>
   </div>
 
-  <!-- JavaScript -->
   <script>
     let finalTranscript = '';
     let recognition;
+    let isRecording = false;
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -74,22 +74,30 @@
       recognition.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
       };
+
+      recognition.onend = () => {
+        if (isRecording) {
+          console.log("Recognition ended, restarting...");
+          recognition.start(); // Auto-restart
+        }
+      };
     } else {
       alert("Your browser does not support Web Speech API. Try using Google Chrome.");
     }
 
     function startRecording() {
       finalTranscript = '';
+      document.getElementById('transcript').innerText = '';
+      isRecording = true;
       if (recognition) recognition.start();
     }
 
     function stopRecording() {
+      isRecording = false;
       if (recognition) recognition.stop();
       console.log("Final Transcription:", finalTranscript);
-      // You can send finalTranscript to backend here
     }
   </script>
 
 </body>
 </html>
-
